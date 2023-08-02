@@ -1,0 +1,48 @@
+// QueryController.cs
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Data.SqlClient; // Ensure this namespace is included
+using Dapper; // Ensure this namespace is included
+
+namespace YourApp.Controllers
+{
+    public class QueryController : Controller
+    {
+        private readonly IConfiguration _configuration;
+
+        public QueryController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        // GET: /Query
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        // POST: /Query
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Index(string sqlQuery)
+        {
+            if (ModelState.IsValid)
+            {
+                // Get the connection string from appsettings.json
+                var connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    var result = connection.Query<dynamic>(sqlQuery);
+
+                    // Pass the result to the view
+                    return View("QueryResult", result);
+                }
+            }
+
+            return View();
+        }
+    }
+}

@@ -1,0 +1,26 @@
+@model IEnumerable<dynamic>
+
+<h1>Query Result:</h1>
+
+@if (Model != null)
+{
+    <table>
+        <thead>
+            @foreach (var property in Model[0].GetType().GetProperties())
+            {
+                <th>@property.Name</th>
+            }
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @foreach (var property in item.GetType().GetProperties())
+                    {
+                        <td>@property.GetValue(item, null)</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
